@@ -70,6 +70,10 @@ namespace FantasyLeagueBenchmark
 
             xdoc.Save("data.xml");
 
+            btnRunModel.Text = "Stop Model";
+            btnRunModel.Click -= btnRunModel_Click;
+            btnRunModel.Click += btnStop_Click;
+
             df.Start(int.Parse(tbSelect.Text), this);
         }
 
@@ -146,6 +150,11 @@ namespace FantasyLeagueBenchmark
         void df_RaiseModelCompleted()
         {
             BeginInvoke(new DefaultDelegate(UpdateValues));
+
+            btnRunModel.Text = "Run Model";
+            btnRunModel.Click -= btnStop_Click;
+            btnRunModel.Click += btnRunModel_Click;
+
         }
 
         public delegate void DefaultDelegate();

@@ -50,7 +50,6 @@
             this.btnShowData = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.btnStop = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTeams)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCost)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPercPicked)).BeginInit();
@@ -180,7 +179,7 @@
             // 
             this.btnGetData.Location = new System.Drawing.Point(424, 168);
             this.btnGetData.Name = "btnGetData";
-            this.btnGetData.Size = new System.Drawing.Size(97, 41);
+            this.btnGetData.Size = new System.Drawing.Size(143, 41);
             this.btnGetData.TabIndex = 3;
             this.btnGetData.Text = "Get Data";
             this.btnGetData.UseVisualStyleBackColor = true;
@@ -188,9 +187,9 @@
             // 
             // btnRunModel
             // 
-            this.btnRunModel.Location = new System.Drawing.Point(527, 168);
+            this.btnRunModel.Location = new System.Drawing.Point(573, 168);
             this.btnRunModel.Name = "btnRunModel";
-            this.btnRunModel.Size = new System.Drawing.Size(94, 41);
+            this.btnRunModel.Size = new System.Drawing.Size(148, 41);
             this.btnRunModel.TabIndex = 3;
             this.btnRunModel.Text = "Run Model";
             this.btnRunModel.UseVisualStyleBackColor = true;
@@ -237,16 +236,6 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
             // 
-            // btnStop
-            // 
-            this.btnStop.Location = new System.Drawing.Point(627, 168);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(94, 41);
-            this.btnStop.TabIndex = 3;
-            this.btnStop.Text = "Stop model";
-            this.btnStop.UseVisualStyleBackColor = true;
-            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -256,7 +245,6 @@
             this.Controls.Add(this.tbSelect);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnShowData);
-            this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnRunModel);
             this.Controls.Add(this.btnGetData);
             this.Controls.Add(this.dgvNotPickable);
@@ -300,6 +288,5 @@
         private System.Windows.Forms.Button btnShowData;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.Button btnStop;
     }
 }

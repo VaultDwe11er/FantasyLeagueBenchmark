@@ -39,7 +39,7 @@ namespace FantasyLeagueBenchmark
         int topToSelect;
         XDocument xdoc;
 
-        Thread t1;
+        BackgroundWorker bgw;
 
         public delegate void ModelComplete();
         public event ModelComplete RaiseModelCompleted;
@@ -47,6 +47,12 @@ namespace FantasyLeagueBenchmark
         public DataForm()
         {
             InitializeComponent();
+
+            bgw = new BackgroundWorker();
+            bgw.DoWork += bgw_DoWork;
+            bgw.ProgressChanged += bgw_ProgressChanged;
+            bgw.RunWorkerCompleted += bgw_RunWorkerCompleted;
+            bgw.WorkerSupportsCancellation = true;
 
             xdoc = XDocument.Load("data.xml");
 
@@ -70,7 +76,6 @@ namespace FantasyLeagueBenchmark
         {
             String responseFromServer = System.IO.File.ReadAllText("players.json");
             String[][] data = JsonConvert.DeserializeObject<String[][]>(responseFromServer);
-
 
             players = new List<Player>();
             cnt = 1;
@@ -115,17 +120,30 @@ namespace FantasyLeagueBenchmark
             parent = sender;
             topToSelect = tts;
 
-            t1 = new Thread(RunModel);
-            t1.Start();
-            //RunModel();
+            bgw.RunWorkerAsync();
+        }
+
+        void bgw_DoWork(object sender, EventArgs e)
+        {
+            RunModel();
+        }
+
+        private void bgw_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        void bgw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            RaiseModelCompleted();
         }
 
         public void Stop()
         {
-            if (!(t1.Equals(null))) t1.Abort();
+            bgw.CancelAsync();
         }
 
-        public void RunModel()
+        void RunModel()
         {
             isFound = false;
             xdoc = XDocument.Load("data.xml");
@@ -213,7 +231,7 @@ namespace FantasyLeagueBenchmark
 
                 ProcessSubsetsOB();
 
-                if (isFound) break;
+                if (isFound || bgw.CancellationPending) break;
             }
         }
 
@@ -227,7 +245,7 @@ namespace FantasyLeagueBenchmark
 
         void ProcessLargerSubsetsOB(int[] subset, int subsetSize, int nextIndex)
         {
-            if (isFound)
+            if (isFound || bgw.CancellationPending)
             {
                 return;
             }
@@ -260,7 +278,7 @@ namespace FantasyLeagueBenchmark
 
         void ProcessLargerSubsetsCT(int[] subset, int subsetSize, int nextIndex)
         {
-            if (isFound)
+            if (isFound || bgw.CancellationPending)
             {
                 return;
             }
@@ -293,7 +311,7 @@ namespace FantasyLeagueBenchmark
 
         void ProcessLargerSubsetsFH(int[] subset, int subsetSize, int nextIndex)
         {
-            if (isFound)
+            if (isFound || bgw.CancellationPending)
             {
                 return;
             }
@@ -326,7 +344,7 @@ namespace FantasyLeagueBenchmark
 
         void ProcessLargerSubsetsSH(int[] subset, int subsetSize, int nextIndex)
         {
-            if (isFound)
+            if (isFound || bgw.CancellationPending)
             {
                 return;
             }
@@ -359,7 +377,7 @@ namespace FantasyLeagueBenchmark
 
         void ProcessLargerSubsetsLF(int[] subset, int subsetSize, int nextIndex)
         {
-            if (isFound)
+            if (isFound || bgw.CancellationPending)
             {
                 return;
             }
@@ -392,7 +410,7 @@ namespace FantasyLeagueBenchmark
 
         void ProcessLargerSubsetsLK(int[] subset, int subsetSize, int nextIndex)
         {
-            if (isFound)
+            if (isFound || bgw.CancellationPending)
             {
                 return;
             }
@@ -425,7 +443,7 @@ namespace FantasyLeagueBenchmark
 
         void ProcessLargerSubsetsFR(int[] subset, int subsetSize, int nextIndex)
         {
-            if (isFound)
+            if (isFound || bgw.CancellationPending)
             {
                 return;
             }
@@ -515,15 +533,8 @@ namespace FantasyLeagueBenchmark
 
                 xdoc.Save("data.xml");
 
-                RaiseModelCompleted();
-
                 MessageBox.Show("Done");
             }
-        }
-
-        private void btnHide_Click(object sender, EventArgs e)
-        {
-            this.Hide();
         }
     }
 }
