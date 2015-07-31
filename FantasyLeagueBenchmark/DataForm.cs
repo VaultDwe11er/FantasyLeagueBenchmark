@@ -61,7 +61,7 @@ namespace FantasyLeagueBenchmark
 
         public void GetPlayerJson()
         {
-            WebRequest request = WebRequest.Create("http://fantasy.udtgames.com/superrugby/json/getAllPlayers1?tournamentId=2");
+            WebRequest request = WebRequest.Create("http://fantasy.udt.co.za/curriecup/json/getAllPlayers1?tournamentId=2");
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             Stream dataStream = response.GetResponseStream();
             StreamReader reader = new StreamReader(dataStream);
@@ -92,7 +92,9 @@ namespace FantasyLeagueBenchmark
                 p.Pickable = 1;
                 p.IsPicked = 0;
 
-                if (xdoc.XPathSelectElement("Data/Teams/Team[@Name=\"" + p.Team + "\"]").Attribute("Target").Value == "0") p.Pickable = 0;
+                var team = xdoc.XPathSelectElement("Data/Teams/Team[@Name=\"" + p.Team + "\"]");
+                if (team == null) p.Pickable = 0;
+                else if (team.Attribute("Target").Value == "0") p.Pickable = 0;
                 if (xdoc.XPathSelectElements("Data/NotPickable/Player[@Name=\"" + p.Name + "\"]").Count() > 0) p.Pickable = 0;
 
                 players.Add(p);
