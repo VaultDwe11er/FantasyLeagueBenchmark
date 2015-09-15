@@ -59,13 +59,22 @@ namespace FantasyLeagueBenchmark
             ProcessPlayerJson();
         }
 
-        public void GetPlayerJson()
+        public void GetPlayerJson(String url, MainForm mf)
         {
-            WebRequest request = WebRequest.Create("http://fantasy.udt.co.za/curriecup/json/getAllPlayers1?tournamentId=2");
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            Stream dataStream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(dataStream);
-            String responseFromServer = reader.ReadToEnd();
+            String responseFromServer = "";
+            try
+            {
+                WebRequest request = WebRequest.Create(url);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream dataStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(dataStream);
+                responseFromServer = reader.ReadToEnd();
+            }
+            catch (UriFormatException)
+            {
+                mf.UpdateStatus("Invalid URL");
+                return;
+            }
 
             System.IO.File.WriteAllText("players.json", responseFromServer);
 
@@ -501,10 +510,13 @@ namespace FantasyLeagueBenchmark
             {
                 foreach (DataGridViewRow row in parent.DgvTeams.Rows)
                 {
-                    isFound = (players.Where(x => x.IsPicked == 1 && x.Team == row.Cells[0].Value.ToString()).Count() <=
-                        int.Parse(row.Cells[2].Value.ToString()));
+                    if (!row.IsNewRow)
+                    {
+                        isFound = (players.Where(x => x.IsPicked == 1 && x.Team == row.Cells[0].Value.ToString()).Count() <=
+                            int.Parse(row.Cells[2].Value.ToString()));
 
-                    if (!isFound) break;
+                        if (!isFound) break;
+                    }
                 }
             }
 

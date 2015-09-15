@@ -50,6 +50,8 @@
             this.btnShowData = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.tbURL = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTeams)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCost)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPercPicked)).BeginInit();
@@ -59,42 +61,42 @@
             // 
             // dgvTeams
             // 
-            this.dgvTeams.AllowUserToAddRows = false;
-            this.dgvTeams.AllowUserToDeleteRows = false;
             this.dgvTeams.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvTeams.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Team,
             this.TmCurrent,
             this.TmTarget,
             this.TmIsInValid});
-            this.dgvTeams.Location = new System.Drawing.Point(12, 12);
+            this.dgvTeams.Location = new System.Drawing.Point(12, 66);
             this.dgvTeams.Name = "dgvTeams";
-            this.dgvTeams.RowHeadersVisible = false;
-            this.dgvTeams.Size = new System.Drawing.Size(406, 353);
+            this.dgvTeams.RowHeadersWidth = 20;
+            this.dgvTeams.Size = new System.Drawing.Size(406, 299);
             this.dgvTeams.TabIndex = 0;
             // 
             // Team
             // 
             this.Team.HeaderText = "Team";
             this.Team.Name = "Team";
-            this.Team.ReadOnly = true;
             // 
             // TmCurrent
             // 
             this.TmCurrent.HeaderText = "Current";
             this.TmCurrent.Name = "TmCurrent";
             this.TmCurrent.ReadOnly = true;
+            this.TmCurrent.Width = 80;
             // 
             // TmTarget
             // 
             this.TmTarget.HeaderText = "Target";
             this.TmTarget.Name = "TmTarget";
+            this.TmTarget.Width = 80;
             // 
             // TmIsInValid
             // 
             this.TmIsInValid.HeaderText = "IsInValid";
             this.TmIsInValid.Name = "TmIsInValid";
             this.TmIsInValid.ReadOnly = true;
+            this.TmIsInValid.Width = 80;
             // 
             // dgvCost
             // 
@@ -236,11 +238,29 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 12);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(32, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "URL:";
+            // 
+            // tbURL
+            // 
+            this.tbURL.Location = new System.Drawing.Point(50, 9);
+            this.tbURL.Name = "tbURL";
+            this.tbURL.Size = new System.Drawing.Size(368, 20);
+            this.tbURL.TabIndex = 8;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(740, 406);
+            this.Controls.Add(this.tbURL);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tbSelect);
             this.Controls.Add(this.label1);
@@ -268,10 +288,6 @@
 
         private System.Windows.Forms.DataGridView dgvTeams;
         private System.Windows.Forms.DataGridView dgvCost;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Team;
-        private System.Windows.Forms.DataGridViewTextBoxColumn TmCurrent;
-        private System.Windows.Forms.DataGridViewTextBoxColumn TmTarget;
-        private System.Windows.Forms.DataGridViewTextBoxColumn TmIsInValid;
         private System.Windows.Forms.DataGridViewTextBoxColumn TotalCost;
         private System.Windows.Forms.DataGridViewTextBoxColumn costTarget;
         private System.Windows.Forms.DataGridViewTextBoxColumn costIsInvalid;
@@ -288,5 +304,11 @@
         private System.Windows.Forms.Button btnShowData;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox tbURL;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Team;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TmCurrent;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TmTarget;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TmIsInValid;
     }
 }

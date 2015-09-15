@@ -39,6 +39,10 @@ namespace FantasyLeagueBenchmark
             {
                 return -x.Points.CompareTo(y.Points);
             }
+            else if (x.Name.CompareTo(y.Name) != 0)
+            {
+                return x.Name.CompareTo(y.Name);
+            }
             else
             {
                 return 0;

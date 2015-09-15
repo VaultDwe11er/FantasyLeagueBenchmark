@@ -35,7 +35,9 @@ namespace FantasyLeagueBenchmark
                 df.RaiseModelCompleted += df_RaiseModelCompleted;
             }
 
-            df.GetPlayerJson();
+            SaveData();
+
+            df.GetPlayerJson(tbURL.Text, this);
         }
 
         private void btnRunModel_Click(object sender, EventArgs e)
@@ -46,29 +48,7 @@ namespace FantasyLeagueBenchmark
                 df.RaiseModelCompleted += df_RaiseModelCompleted;
             }
 
-            xdoc.XPathSelectElement("Data/Cost").Attribute("Target").Value = dgvCost.Rows[0].Cells[1].Value.ToString();
-            xdoc.XPathSelectElement("Data/PercPicked").Attribute("Target").Value = dgvPercPicked.Rows[0].Cells[1].Value.ToString();
-            xdoc.XPathSelectElement("Data/TopSelect").Attribute("Value").Value = tbSelect.Text;
-            
-            foreach (DataGridViewRow row in dgvTeams.Rows)
-            {
-                xdoc.XPathSelectElement("Data/Teams/Team[@Name=\"" + row.Cells[0].Value + "\"]").Attribute("Target").Value
-                    = row.Cells[2].Value.ToString();
-            }
-
-            xdoc.XPathSelectElement("Data/NotPickable").RemoveNodes();
-
-            foreach (DataGridViewRow row in dgvNotPickable.Rows)
-            {
-                if (row.Cells[0].Value != null)
-                {
-                    XElement elem = new XElement("Player");
-                    elem.Add(new XAttribute("Name", row.Cells[0].Value.ToString()));
-                    xdoc.XPathSelectElement("Data/NotPickable").Add(elem);
-                }
-            }
-
-            xdoc.Save("data.xml");
+            SaveData();
 
             btnRunModel.Text = "Stop Model";
             btnRunModel.Click -= btnRunModel_Click;
@@ -117,7 +97,9 @@ namespace FantasyLeagueBenchmark
         {
             xdoc = XDocument.Load("data.xml");
 
-            while (dgvTeams.Rows.Count > 0) dgvTeams.Rows.RemoveAt(0);
+            tbURL.Text = xdoc.XPathSelectElement("Data/Url").Value;
+
+            while (dgvTeams.Rows.Count > 1) dgvTeams.Rows.RemoveAt(0);
             foreach (var node in xdoc.XPathSelectElements("Data/Teams/Team"))
             {
                 dgvTeams.Rows.Add(node.Attribute("Name").Value, node.Attribute("Current").Value, node.Attribute("Target").Value, 0);
@@ -144,6 +126,43 @@ namespace FantasyLeagueBenchmark
             dgvPercPicked.Rows.Add(actualPercPicked, targetPercPicked, percPickedInvalid);
 
             tbSelect.Text = xdoc.XPathSelectElement("Data/TopSelect").Attribute("Value").Value;
+        }
+
+        public void SaveData()
+        {
+            xdoc.XPathSelectElement("Data/Url").Value = tbURL.Text;
+            xdoc.XPathSelectElement("Data/Cost").Attribute("Target").Value = dgvCost.Rows[0].Cells[1].Value.ToString();
+            xdoc.XPathSelectElement("Data/PercPicked").Attribute("Target").Value = dgvPercPicked.Rows[0].Cells[1].Value.ToString();
+            xdoc.XPathSelectElement("Data/TopSelect").Attribute("Value").Value = tbSelect.Text;
+
+            xdoc.XPathSelectElement("Data/Teams").RemoveNodes();
+
+            foreach (DataGridViewRow row in dgvTeams.Rows)
+            {
+                if (!row.IsNewRow)
+                {
+                    XElement elem = new XElement("Team");
+                    elem.Add(new XAttribute("Name", row.Cells[0].Value));
+                    elem.Add(new XAttribute("Current", row.Cells[1].Value ?? 0));
+                    elem.Add(new XAttribute("Target", row.Cells[2].Value));
+
+                    xdoc.XPathSelectElement("Data/Teams").Add(elem);
+                }
+            }
+
+            xdoc.XPathSelectElement("Data/NotPickable").RemoveNodes();
+
+            foreach (DataGridViewRow row in dgvNotPickable.Rows)
+            {
+                if (row.Cells[0].Value != null)
+                {
+                    XElement elem = new XElement("Player");
+                    elem.Add(new XAttribute("Name", row.Cells[0].Value.ToString()));
+                    xdoc.XPathSelectElement("Data/NotPickable").Add(elem);
+                }
+            }
+
+            xdoc.Save("data.xml");
         }
 
 
