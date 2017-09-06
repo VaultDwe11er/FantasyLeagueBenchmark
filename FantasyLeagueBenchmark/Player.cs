@@ -68,5 +68,6 @@ namespace FantasyLeagueBenchmark
         public int sideId { get; set; }
         public int teams_selected { get; set; }
         public float value { get; set; }
+        public int totalPoints { get; set; }
     }
 }

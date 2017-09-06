@@ -198,7 +198,7 @@ namespace FantasyLeagueBenchmark
                             throw new Exception();
                     }
                     p.Price = entry.value;
-                    p.Points = 0; //TODO
+                    p.Points = entry.totalPoints;
                     p.PercPicked = entry.teams_selected;
                     p.Pickable = 1;
                     p.IsPicked = 0;
