@@ -84,29 +84,133 @@ namespace FantasyLeagueBenchmark
         public void ProcessPlayerJson()
         {
             String responseFromServer = System.IO.File.ReadAllText("players.json");
-            String[][] data = JsonConvert.DeserializeObject<String[][]>(responseFromServer);
 
             players = new List<Player>();
             cnt = 1;
 
-            foreach (var entry in data)
+            if (responseFromServer.Substring(0, 1) == "[")
             {
-                Player p = new Player();
-                p.Name = entry[13];
-                p.Position = entry[6];
-                p.Team = entry[7];
-                p.Price = double.Parse(entry[3]);
-                p.Points = int.Parse(entry[18]);
-                p.PercPicked = int.Parse(entry[16]);
-                p.Pickable = 1;
-                p.IsPicked = 0;
+                String[][] data = JsonConvert.DeserializeObject<String[][]>(responseFromServer);
+                
+                foreach (var entry in data)
+                {
+                    Player p = new Player();
+                    p.Name = entry[13];
+                    p.Position = entry[6];
+                    p.Team = entry[7];
+                    p.Price = double.Parse(entry[3]);
+                    p.Points = int.Parse(entry[18]);
+                    p.PercPicked = int.Parse(entry[16]);
+                    p.Pickable = 1;
+                    p.IsPicked = 0;
 
-                var team = xdoc.XPathSelectElement("Data/Teams/Team[@Name=\"" + p.Team + "\"]");
-                if (team == null) p.Pickable = 0;
-                else if (team.Attribute("Target").Value == "0") p.Pickable = 0;
-                if (xdoc.XPathSelectElements("Data/NotPickable/Player[@Name=\"" + p.Name + "\"]").Count() > 0) p.Pickable = 0;
+                    var team = xdoc.XPathSelectElement("Data/Teams/Team[@Name=\"" + p.Team + "\"]");
+                    if (team == null) p.Pickable = 0;
+                    else if (team.Attribute("Target").Value == "0") p.Pickable = 0;
+                    if (xdoc.XPathSelectElements("Data/NotPickable/Player[@Name=\"" + p.Name + "\"]").Count() > 0) p.Pickable = 0;
 
-                players.Add(p);
+                    players.Add(p);
+                }
+            }
+            else
+            {
+                Pro14Json data = JsonConvert.DeserializeObject<Pro14Json>(responseFromServer);
+
+                
+                foreach (var entry in data.players)
+                {
+                    Player p = new Player();
+                    
+                    p.Name = entry.info1;
+
+                    switch(entry.categoryId)
+                    {
+                        case 8:
+                            p.Position = "Front Row";
+                            break;
+                        case 9:
+                            p.Position = "Lock";
+                            break;
+                        case 10:
+                            p.Position = "Loose Forward";
+                            break;
+                        case 11:
+                            p.Position = "Scrum Half";
+                            break;
+                        case 12:
+                            p.Position = "Fly Half";
+                            break;
+                        case 13:
+                            p.Position = "Centre";
+                            break;
+                        case 14:
+                            p.Position = "Outside Back";
+                            break;
+                        default:
+                            throw new Exception();
+                    }
+
+                    switch (entry.sideId)
+                    {
+                        case 1:
+                            p.Team = "Benetton Rugby Treviso";
+                            break;
+                        case 2:
+                            p.Team = "Cardiff Blues";
+                            break;
+                        case 3:
+                            p.Team = "Connacht Rugby";
+                            break;
+                        case 4:
+                            p.Team = "Edinburgh Rugby";
+                            break;
+                        case 5:
+                            p.Team = "Glasgow Warriors";
+                            break;
+                        case 6:
+                            p.Team = "Leinster Rugby";
+                            break;
+                        case 7:
+                            p.Team = "Munster Rugby";
+                            break;
+                        case 8:
+                            p.Team = "Dragons Rugby";
+                            break;
+                        case 9:
+                            p.Team = "Ospreys";
+                            break;
+                        case 10:
+                            p.Team = "Scarlets";
+                            break;
+                        case 11:
+                            p.Team = "Ulster Rugby";
+                            break;
+                        case 12:
+                            p.Team = "Zebre Rugby";
+                            break;
+                        case 13:
+                            p.Team = "Southern Kings";
+                            break;
+                        case 14:
+                            p.Team = "Toyota Cheetahs";
+                            break;
+                        default:
+                            throw new Exception();
+                    }
+                    p.Price = entry.value;
+                    p.Points = 0; //TODO
+                    p.PercPicked = entry.teams_selected;
+                    p.Pickable = 1;
+                    p.IsPicked = 0;
+                    
+
+                    var team = xdoc.XPathSelectElement("Data/Teams/Team[@Name=\"" + p.Team + "\"]");
+                    if (team == null) p.Pickable = 0;
+                    else if (team.Attribute("Target").Value == "0") p.Pickable = 0;
+                    if (xdoc.XPathSelectElements("Data/NotPickable/Player[@Name=\"" + p.Name + "\"]").Count() > 0) p.Pickable = 0;
+
+                    players.Add(p);
+                }            
             }
 
             players.Sort(new PlayerComp());
@@ -164,13 +268,13 @@ namespace FantasyLeagueBenchmark
             cnt = 1;
             for (x = topToSelect; x < 500; x++)
             {
-                cntOB = 4;
-                cntCT = 3;
-                cntFH = 2;
-                cntSH = 2;
-                cntLF = 4;
-                cntLK = 3;
-                cntFR = 4;
+                cntOB = 3;
+                cntCT = 2;
+                cntFH = 1;
+                cntSH = 1;
+                cntLF = 3;
+                cntLK = 2;
+                cntFR = 3;
 
                 parent.UpdateStatus("Processing top " + x + " players...");
 

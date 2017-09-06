@@ -49,4 +49,24 @@ namespace FantasyLeagueBenchmark
             }
         }
     }
+
+    public class Pro14Json
+    {
+        public Pro14Player[] players { get; set; }
+    }
+
+    public class Pro14Player
+    {
+        public int categoryId { get; set; }
+        public int code { get; set; }
+        public string fullName { get; set; }
+        public string info1 { get; set; }
+        public int lastSeasonPoints { get; set; }
+        public int lastWeekPoints { get; set; }
+        public string name { get; set; }
+        public int nextFixtureId { get; set; }
+        public int sideId { get; set; }
+        public int teams_selected { get; set; }
+        public float value { get; set; }
+    }
 }
