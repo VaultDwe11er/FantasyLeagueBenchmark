@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FantasyLeagueBenchmark
 {
@@ -13,7 +10,7 @@ namespace FantasyLeagueBenchmark
         public String Team { get; set; }
         public double Price { get; set; }
         public int Points { get; set; }
-        public int PercPicked { get; set; }
+        public double PercPicked { get; set; }
         public int Seq { get; set; }
         public int IsPicked { get; set; }
         public int Pickable { get; set; }
@@ -58,7 +55,7 @@ namespace FantasyLeagueBenchmark
     public class Pro14Player
     {
         public int categoryId { get; set; }
-        public int code { get; set; }
+        public string code { get; set; } //This should actually be int, but one of the values is "WRONG"
         public string fullName { get; set; }
         public string info1 { get; set; }
         public int lastSeasonPoints { get; set; }
@@ -69,5 +66,35 @@ namespace FantasyLeagueBenchmark
         public int teams_selected { get; set; }
         public float value { get; set; }
         public int totalPoints { get; set; }
+    }
+
+    public class FoxJson
+    {
+        public int id { get; set; }
+        public string first_name { get; set; }
+        public string last_name { get; set; }
+        public int squad_id { get; set; }
+        public int cost { get; set; }
+        public string status { get; set; }
+        public FoxPlayerStats stats { get; set; }
+        public int[] positions { get; set; }
+        public int is_bye { get; set; }
+        public int locked { get; set; }
+    }
+
+    public class FoxPlayerStats
+    {
+        //public object scores { get; set; }
+        //public object match_scores { get; set; }
+        public int round_rank { get; set; }
+        public int season_rank { get; set; }
+        public int games_played { get; set; }
+        public int total_points { get; set; }
+        public double avg_points { get; set; }
+        public int high_score { get; set; }
+        public double last_3_avg { get; set; }
+        public double last_5_avg { get; set; }
+        public int selections { get; set; }
+        public double owned_by { get; set; }
     }
 }

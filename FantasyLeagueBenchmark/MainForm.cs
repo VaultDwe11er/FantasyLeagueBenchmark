@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using System.IO;
 
 namespace FantasyLeagueBenchmark
 {
@@ -16,35 +10,38 @@ namespace FantasyLeagueBenchmark
     {
         DataForm df;
         XDocument xdoc;
-        
+
         public MainForm()
         {
             InitializeComponent();
 
-            df = new DataForm();
-            df.RaiseModelCompleted += df_RaiseModelCompleted;
+            cbSite.DataSource = Enum.GetValues(typeof(SupportedSite));
 
             UpdateValues();
+
+            df = new DataForm(cbSite.Text);
+            df.RaiseModelCompleted += df_RaiseModelCompleted;
         }
 
         private void btnGetData_Click(object sender, EventArgs e)
         {
             if (df.IsDisposed)
             {
-                df = new DataForm();
+                df = new DataForm(cbSite.Text);
                 df.RaiseModelCompleted += df_RaiseModelCompleted;
             }
 
             SaveData();
 
-            df.GetPlayerJson(tbURL.Text, this);
+            string url = xdoc.XPathSelectElement("Data/Url").Value;
+            df.GetPlayerJson(url, this);
         }
 
         private void btnRunModel_Click(object sender, EventArgs e)
         {
             if (df.IsDisposed)
             {
-                df = new DataForm();
+                df = new DataForm(cbSite.Text);
                 df.RaiseModelCompleted += df_RaiseModelCompleted;
             }
 
@@ -66,15 +63,15 @@ namespace FantasyLeagueBenchmark
         {
             if (df.IsDisposed)
             {
-                df = new DataForm();
+                df = new DataForm(cbSite.Text);
                 df.RaiseModelCompleted += df_RaiseModelCompleted;
             }
             df.Show();
         }
 
-        public int TargetPercPicked
+        public double TargetPercPicked
         {
-            get { return int.Parse(dgvPercPicked.Rows[0].Cells[1].Value.ToString()); }
+            get { return double.Parse(dgvPercPicked.Rows[0].Cells[1].Value.ToString()); }
         }
 
         public double TargetCost
@@ -95,9 +92,12 @@ namespace FantasyLeagueBenchmark
 
         public void UpdateValues()
         {
-            xdoc = XDocument.Load("data.xml");
+            string strSite = File.ReadAllText("site.txt");
+            cbSite.Text = strSite;
 
-            tbURL.Text = xdoc.XPathSelectElement("Data/Url").Value;
+            xdoc = XDocument.Load("data_" + strSite + ".xml");
+
+            //TODO: handle case where file does not exist
 
             while (dgvTeams.Rows.Count > 1) dgvTeams.Rows.RemoveAt(0);
             foreach (var node in xdoc.XPathSelectElements("Data/Teams/Team"))
@@ -115,11 +115,11 @@ namespace FantasyLeagueBenchmark
             double actualCost = double.Parse(xdoc.XPathSelectElement("Data/Cost").Attribute("Actual").Value);
             double costInvalid = actualCost <= targetCost ? 0 : 1;
 
-            if(dgvCost.Rows.Count == 1) dgvCost.Rows.RemoveAt(0);
+            if (dgvCost.Rows.Count == 1) dgvCost.Rows.RemoveAt(0);
             dgvCost.Rows.Add(actualCost, targetCost, costInvalid);
 
-            int targetPercPicked = int.Parse(xdoc.XPathSelectElement("Data/PercPicked").Attribute("Target").Value);
-            int actualPercPicked = int.Parse(xdoc.XPathSelectElement("Data/PercPicked").Attribute("Actual").Value);
+            double targetPercPicked = double.Parse(xdoc.XPathSelectElement("Data/PercPicked").Attribute("Target").Value);
+            double actualPercPicked = double.Parse(xdoc.XPathSelectElement("Data/PercPicked").Attribute("Actual").Value);
             int percPickedInvalid = actualPercPicked >= targetPercPicked ? 0 : 1;
 
             if (dgvPercPicked.Rows.Count == 1) dgvPercPicked.Rows.RemoveAt(0);
@@ -130,7 +130,6 @@ namespace FantasyLeagueBenchmark
 
         public void SaveData()
         {
-            xdoc.XPathSelectElement("Data/Url").Value = tbURL.Text;
             xdoc.XPathSelectElement("Data/Cost").Attribute("Target").Value = dgvCost.Rows[0].Cells[1].Value.ToString();
             xdoc.XPathSelectElement("Data/PercPicked").Attribute("Target").Value = dgvPercPicked.Rows[0].Cells[1].Value.ToString();
             xdoc.XPathSelectElement("Data/TopSelect").Attribute("Value").Value = tbSelect.Text;
@@ -162,7 +161,7 @@ namespace FantasyLeagueBenchmark
                 }
             }
 
-            xdoc.Save("data.xml");
+            xdoc.Save("data_" + cbSite.Text + ".xml");
         }
 
 
@@ -177,5 +176,20 @@ namespace FantasyLeagueBenchmark
         }
 
         public delegate void DefaultDelegate();
+
+        private void cbSite_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (df != null)
+            {
+                var cb = (ComboBox)sender;
+                df.ChangeSupportedSite(cb.Text);
+                File.WriteAllText("site.txt", cb.Text);
+                UpdateValues();
+                if (File.Exists("players_" + cb.Text + ".json"))
+                {
+                    df.ProcessPlayerJson();
+                }
+            }
+        }
     }
 }

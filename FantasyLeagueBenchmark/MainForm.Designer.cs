@@ -51,7 +51,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.label2 = new System.Windows.Forms.Label();
-            this.tbURL = new System.Windows.Forms.TextBox();
+            this.cbSite = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTeams)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCost)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPercPicked)).BeginInit();
@@ -241,25 +241,27 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 12);
+            this.label2.Location = new System.Drawing.Point(12, 15);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(32, 13);
+            this.label2.Size = new System.Drawing.Size(28, 13);
             this.label2.TabIndex = 7;
-            this.label2.Text = "URL:";
+            this.label2.Text = "Site:";
             // 
-            // tbURL
+            // cbSite
             // 
-            this.tbURL.Location = new System.Drawing.Point(50, 9);
-            this.tbURL.Name = "tbURL";
-            this.tbURL.Size = new System.Drawing.Size(368, 20);
-            this.tbURL.TabIndex = 8;
+            this.cbSite.FormattingEnabled = true;
+            this.cbSite.Location = new System.Drawing.Point(46, 12);
+            this.cbSite.Name = "cbSite";
+            this.cbSite.Size = new System.Drawing.Size(121, 21);
+            this.cbSite.TabIndex = 8;
+            this.cbSite.SelectedIndexChanged += new System.EventHandler(this.cbSite_SelectedIndexChanged);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(740, 406);
-            this.Controls.Add(this.tbURL);
+            this.Controls.Add(this.cbSite);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tbSelect);
@@ -305,10 +307,10 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox tbURL;
         private System.Windows.Forms.DataGridViewTextBoxColumn Team;
         private System.Windows.Forms.DataGridViewTextBoxColumn TmCurrent;
         private System.Windows.Forms.DataGridViewTextBoxColumn TmTarget;
         private System.Windows.Forms.DataGridViewTextBoxColumn TmIsInValid;
+        private System.Windows.Forms.ComboBox cbSite;
     }
 }
