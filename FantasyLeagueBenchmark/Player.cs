@@ -97,4 +97,48 @@ namespace FantasyLeagueBenchmark
         public int selections { get; set; }
         public double owned_by { get; set; }
     }
+
+    public class SportsDeckJson
+    {
+        public int id { get; set; }
+        public string first_name { get; set; }
+        public string last_name { get; set; }
+        public SportsDeckPositions[] positions { get; set; }
+        public SportsDeckTeam team { get; set; }
+        public string status { get; set; }
+        public SportsDeckPlayerStats[] player_stats { get; set; }
+    }
+
+    public class SportsDeckPositions
+    {
+        public string position_long { get; set; }
+    }
+
+    public class SportsDeckTeam
+    {
+        public string name { get; set; }
+    }
+
+    public class SportsDeckPlayerStats
+    {
+        public int price { get; set; }
+        public int total_points { get; set; }
+        public double owned { get; set; }
+    }
+
+    public class PremierLeagueJSON
+    {
+        public PremierLeaguePlayer[] elements;
+    }
+    public class PremierLeaguePlayer
+    {
+        public String first_name;
+        public String second_name;
+        public int element_type;
+        public int team_code;
+        public double now_cost;
+        public int total_points;
+        public double selected_by_percent;
+
+    }
 }

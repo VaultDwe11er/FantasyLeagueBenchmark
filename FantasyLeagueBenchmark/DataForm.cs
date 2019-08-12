@@ -17,13 +17,15 @@ namespace FantasyLeagueBenchmark
     {
         UDT,
         PRO14,
-        FOX
+        FOX,
+        SportsDeck,
+        PremierLeague
     }
     public partial class DataForm : Form
     {
-        public List<int> arrOB, arrCT, arrFH, arrSH, arrLF, arrLK, arrHK, arrPR, arrFR;
-        public List<int> subOB, subCT, subFH, subSH, subLF, subLK, subHK, subPR, subFR;
-        public int cntOB, cntCT, cntFH, cntSH, cntLF, cntLK, cntHK, cntPR, cntFR;
+        public List<int> arrOB, arrCT, arrFH, arrSH, arrLF, arrLK, arrHK, arrPR, arrFR, arrFWD, arrMID, arrDEF, arrGKP;
+        public List<int> subOB, subCT, subFH, subSH, subLF, subLK, subHK, subPR, subFR, subFWD, subMID, subDEF, subGKP;
+        public int cntOB, cntCT, cntFH, cntSH, cntLF, cntLK, cntHK, cntPR, cntFR, cntFWD, cntMID, cntDEF, cntGKP;
 
         int cnt;
         int x;
@@ -65,7 +67,18 @@ namespace FantasyLeagueBenchmark
             String responseFromServer = "";
             try
             {
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
                 WebRequest request = WebRequest.Create(url);
+
+                WebProxy webProxy = new WebProxy("http://172.17.6.119:8080/", true)
+                {
+                    UseDefaultCredentials = true
+                };
+
+                request.Proxy = webProxy;
+
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 Stream dataStream = response.GetResponseStream();
                 StreamReader reader;
@@ -334,6 +347,136 @@ namespace FantasyLeagueBenchmark
                     }
                     break;
 
+                case SupportedSite.SportsDeck:
+                    SportsDeckJson[] sportsdeckdata = JsonConvert.DeserializeObject<SportsDeckJson[]>(responseFromServer);
+
+                    foreach (var entry in sportsdeckdata)
+                    {
+                        Player p = new Player();
+
+                        p.Name = entry.first_name + " " + entry.last_name;
+                        p.Position = entry.positions[0].position_long;
+                        p.Team = entry.team.name;
+                        p.Price = entry.player_stats[0].price;
+                        p.Points = entry.player_stats[0].total_points;
+                        p.PercPicked = entry.player_stats[0].owned;
+                        p.Pickable = 1;
+                        p.IsPicked = 0;
+
+                        var team = xdoc.XPathSelectElement("Data/Teams/Team[@Name=\"" + p.Team + "\"]");
+                        if (team == null) p.Pickable = 0;
+                        else if (team.Attribute("Target").Value == "0") p.Pickable = 0;
+                        if (xdoc.XPathSelectElements("Data/NotPickable/Player[@Name=\"" + p.Name + "\"]").Count() > 0) p.Pickable = 0;
+
+                        players.Add(p);
+                    }
+                    break;
+
+                case SupportedSite.PremierLeague:
+                    PremierLeagueJSON premierleaguedata = JsonConvert.DeserializeObject<PremierLeagueJSON>(responseFromServer);
+
+                    foreach (var entry in premierleaguedata.elements)
+                    {
+                        Player p = new Player();
+
+                        p.Name = entry.first_name + " " + entry.second_name;
+
+                        switch(entry.element_type)
+                        {
+                            case 1:
+                                p.Position = "Goalkeeper";
+                                break;
+                            case 2:
+                                p.Position = "Defender";
+                                break;
+                            case 3:
+                                p.Position = "Midfielder";
+                                break;
+                            case 4:
+                                p.Position = "Forward";
+                                break;
+                        }
+                        switch (entry.team_code)
+                        {
+                            case 3:
+                                p.Team = "Arsenal";
+                                break;
+                            case 7:
+                                p.Team = "Aston Villa";
+                                break;
+                            case 91:
+                                p.Team = "Bournemouth";
+                                break;
+                            case 36:
+                                p.Team = "Brighton";
+                                break;
+                            case 90:
+                                p.Team = "Burnley";
+                                break;
+                            case 8:
+                                p.Team = "Chelsea";
+                                break;
+                            case 31:
+                                p.Team = "Crystal Palace";
+                                break;
+                            case 11:
+                                p.Team = "Everton";
+                                break;
+                            case 13:
+                                p.Team = "Leicester";
+                                break;
+                            case 14:
+                                p.Team = "Liverpool";
+                                break;
+                            case 43:
+                                p.Team = "Man City";
+                                break;
+                            case 1:
+                                p.Team = "Man Utd";
+                                break;
+                            case 4:
+                                p.Team = "Newcastle";
+                                break;
+                            case 45:
+                                p.Team = "Norwich";
+                                break;
+                            case 49:
+                                p.Team = "Sheffield Utd";
+                                break;
+                            case 20:
+                                p.Team = "Southampton";
+                                break;
+                            case 6:
+                                p.Team = "Spurs";
+                                break;
+                            case 57:
+                                p.Team = "Watford";
+                                break;
+                            case 21:
+                                p.Team = "Westham";
+                                break;
+                            case 39:
+                                p.Team = "Wolves";
+                                break;
+                            default:
+                                throw new KeyNotFoundException("Team not found");
+
+                        }
+                        p.Price = entry.now_cost / 10;
+                        p.Points = entry.total_points;
+                        p.PercPicked = entry.selected_by_percent;
+                        p.Pickable = 1;
+                        p.IsPicked = 0;
+
+                        var team = xdoc.XPathSelectElement("Data/Teams/Team[@Name=\"" + p.Team + "\"]");
+                        if (team == null) p.Pickable = 0;
+                        else if (team.Attribute("Target").Value == "0") p.Pickable = 0;
+                        if (xdoc.XPathSelectElements("Data/NotPickable/Player[@Name=\"" + p.Name + "\"]").Count() > 0) p.Pickable = 0;
+
+                        players.Add(p);
+                    }
+                    break;
+
                 default:
                     throw new NotSupportedException("Site is not supported");
             }
@@ -390,6 +533,20 @@ namespace FantasyLeagueBenchmark
 
             ProcessPlayerJson();
 
+            cntOB = 0;
+            cntCT = 0;
+            cntFH = 0;
+            cntSH = 0;
+            cntLF = 0;
+            cntLK = 0;
+            cntHK = 0;
+            cntPR = 0;
+            cntFR = 0;
+            cntFWD = 0;
+            cntMID = 0;
+            cntDEF = 0;
+            cntGKP = 0;
+
             cnt = 1;
             for (x = topToSelect; x < 500; x++)
             {
@@ -402,8 +559,6 @@ namespace FantasyLeagueBenchmark
                         cntSH = 2;
                         cntLF = 3;
                         cntLK = 3;
-                        cntHK = 0;
-                        cntPR = 0;
                         cntFR = 4;
 
                         break;
@@ -414,8 +569,6 @@ namespace FantasyLeagueBenchmark
                         cntSH = 1;
                         cntLF = 3;
                         cntLK = 2;
-                        cntHK = 0;
-                        cntPR = 0;
                         cntFR = 3;
                         break;
                     case SupportedSite.FOX:
@@ -427,13 +580,28 @@ namespace FantasyLeagueBenchmark
                         cntLK = 3;
                         cntHK = 2;
                         cntPR = 3;
-                        cntFR = 0;
+                        break;
+                    case SupportedSite.SportsDeck:
+                        cntOB = 4;
+                        cntCT = 3;
+                        cntFH = 2;
+                        cntSH = 2;
+                        cntLF = 4;
+                        cntLK = 3;
+                        cntHK = 2;
+                        cntPR = 3;
+                        break;
+                    case SupportedSite.PremierLeague:
+                        cntFWD = 3;
+                        cntMID = 5;
+                        cntDEF = 5;
+                        cntGKP = 2;
                         break;
                     default:
                         throw new NotSupportedException("Site is not supported");
                 }
 
-                        parent.UpdateStatus("Processing top " + x + " players...");
+                parent.UpdateStatus("Processing top " + x + " players...");
 
                 arrOB = new List<int>();
                 arrCT = new List<int>();
@@ -444,6 +612,10 @@ namespace FantasyLeagueBenchmark
                 arrHK = new List<int>();
                 arrPR = new List<int>();
                 arrFR = new List<int>();
+                arrFWD = new List<int>();
+                arrMID = new List<int>();
+                arrDEF = new List<int>();
+                arrGKP = new List<int>();
 
                 for (int i = 0; i < x - 1; i++)
                 {
@@ -462,6 +634,7 @@ namespace FantasyLeagueBenchmark
                             arrSH.Add(i);
                             break;
                         case "Loose Forward":
+                        case "Backrower":
                             arrLF.Add(i);
                             break;
                         case "Lock":
@@ -475,6 +648,18 @@ namespace FantasyLeagueBenchmark
                             break;
                         case "Front Row":
                             arrFR.Add(i);
+                            break;
+                        case "Forward":
+                            arrFWD.Add(i);
+                            break;
+                        case "Midfielder":
+                            arrMID.Add(i);
+                            break;
+                        case "Defender":
+                            arrDEF.Add(i);
+                            break;
+                        case "Goalkeeper":
+                            arrGKP.Add(i);
                             break;
                         default:
                             throw new KeyNotFoundException("Position not found");
@@ -497,6 +682,7 @@ namespace FantasyLeagueBenchmark
                         cntSH--;
                         break;
                     case "Loose Forward":
+                    case "Backrower":
                         cntLF--;
                         break;
                     case "Lock":
@@ -510,6 +696,18 @@ namespace FantasyLeagueBenchmark
                         break;
                     case "Front Row":
                         cntFR--;
+                        break;
+                    case "Forward":
+                        cntFWD--;
+                        break;
+                    case "Midfielder":
+                        cntMID--;
+                        break;
+                    case "Defender":
+                        cntDEF--;
+                        break;
+                    case "Goalkeeper":
+                        cntGKP--;
                         break;
                     default:
                         throw new KeyNotFoundException("Position not found");
@@ -801,10 +999,7 @@ namespace FantasyLeagueBenchmark
             }
             else if (subsetSize == subset.Count())
             {
-                if (cnt % 1000 == 0) parent.UpdateStatus("Processing " + cnt + " (top " + x + " players)...");
-
                 ProcessFR(subset);
-                cnt++;
             }
             else
             {
@@ -818,6 +1013,141 @@ namespace FantasyLeagueBenchmark
         void ProcessFR(int[] subset)
         {
             subFR = subset.ToList();
+            ProcessSubsetsFWD();
+        }
+
+        //FWD
+        void ProcessSubsetsFWD()
+        {
+            int[] subset = new int[cntFWD];
+
+            ProcessLargerSubsetsFWD(subset, 0, 0);
+        }
+
+        void ProcessLargerSubsetsFWD(int[] subset, int subsetSize, int nextIndex)
+        {
+            if (isFound || bgw.CancellationPending)
+            {
+                return;
+            }
+            else if (subsetSize == subset.Count())
+            {
+                ProcessFWD(subset);
+            }
+            else
+            {
+                for (int j = nextIndex; j < arrFWD.Count; j++)
+                {
+                    subset[subsetSize] = arrFWD[j];
+                    ProcessLargerSubsetsFWD(subset, subsetSize + 1, j + 1);
+                }
+            }
+        }
+        void ProcessFWD(int[] subset)
+        {
+            subFWD = subset.ToList();
+            ProcessSubsetsMID();
+        }
+
+        //MID
+        void ProcessSubsetsMID()
+        {
+            int[] subset = new int[cntMID];
+
+            ProcessLargerSubsetsMID(subset, 0, 0);
+        }
+
+        void ProcessLargerSubsetsMID(int[] subset, int subsetSize, int nextIndex)
+        {
+            if (isFound || bgw.CancellationPending)
+            {
+                return;
+            }
+            else if (subsetSize == subset.Count())
+            {
+                ProcessMID(subset);
+            }
+            else
+            {
+                for (int j = nextIndex; j < arrMID.Count; j++)
+                {
+                    subset[subsetSize] = arrMID[j];
+                    ProcessLargerSubsetsMID(subset, subsetSize + 1, j + 1);
+                }
+            }
+        }
+        void ProcessMID(int[] subset)
+        {
+            subMID = subset.ToList();
+            ProcessSubsetsDEF();
+        }
+
+        //DEF
+        void ProcessSubsetsDEF()
+        {
+            int[] subset = new int[cntDEF];
+
+            ProcessLargerSubsetsDEF(subset, 0, 0);
+        }
+
+        void ProcessLargerSubsetsDEF(int[] subset, int subsetSize, int nextIndex)
+        {
+            if (isFound || bgw.CancellationPending)
+            {
+                return;
+            }
+            else if (subsetSize == subset.Count())
+            {
+                ProcessDEF(subset);
+            }
+            else
+            {
+                for (int j = nextIndex; j < arrDEF.Count; j++)
+                {
+                    subset[subsetSize] = arrDEF[j];
+                    ProcessLargerSubsetsDEF(subset, subsetSize + 1, j + 1);
+                }
+            }
+        }
+        void ProcessDEF(int[] subset)
+        {
+            subDEF = subset.ToList();
+            ProcessSubsetsGKP();
+        }
+
+        //GKP
+        void ProcessSubsetsGKP()
+        {
+            int[] subset = new int[cntGKP];
+
+            ProcessLargerSubsetsGKP(subset, 0, 0);
+        }
+
+        void ProcessLargerSubsetsGKP(int[] subset, int subsetSize, int nextIndex)
+        {
+            if (isFound || bgw.CancellationPending)
+            {
+                return;
+            }
+            else if (subsetSize == subset.Count())
+            {
+                if (cnt % 1000 == 0) parent.UpdateStatus("Processing " + cnt + " (top " + x + " players)...");
+
+                ProcessGKP(subset);
+                cnt++;
+            }
+            else
+            {
+                for (int j = nextIndex; j < arrGKP.Count; j++)
+                {
+                    subset[subsetSize] = arrGKP[j];
+                    ProcessLargerSubsetsGKP(subset, subsetSize + 1, j + 1);
+                }
+            }
+        }
+        void ProcessGKP(int[] subset)
+        {
+            subGKP = subset.ToList();
 
             resultList = new List<int>();
             resultList.AddRange(subOB);
@@ -829,6 +1159,10 @@ namespace FantasyLeagueBenchmark
             resultList.AddRange(subHK);
             resultList.AddRange(subPR);
             resultList.AddRange(subFR);
+            resultList.AddRange(subFWD);
+            resultList.AddRange(subMID);
+            resultList.AddRange(subDEF);
+            resultList.AddRange(subGKP);
             resultList.Add(x - 1);
 
             CheckFound();
