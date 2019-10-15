@@ -130,6 +130,12 @@ namespace FantasyLeagueBenchmark
     {
         public PremierLeaguePlayer[] elements;
     }
+
+    public class PremierLeagueTeamJSON
+    {
+        public PremierLeagueTeamPlayer[] picks;
+    }
+
     public class PremierLeaguePlayer
     {
         public String first_name;
@@ -139,6 +145,12 @@ namespace FantasyLeagueBenchmark
         public double now_cost;
         public int total_points;
         public double selected_by_percent;
+        public int id;
+    }
 
+    public class PremierLeagueTeamPlayer
+    {
+        public int element;
+        public double selling_price;
     }
 }

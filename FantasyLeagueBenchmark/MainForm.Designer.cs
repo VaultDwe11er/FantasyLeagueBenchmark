@@ -34,13 +34,7 @@
             this.TmTarget = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.TmIsInValid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCost = new System.Windows.Forms.DataGridView();
-            this.TotalCost = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.costTarget = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.costIsInvalid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvPercPicked = new System.Windows.Forms.DataGridView();
-            this.PercPicked = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ppTarget = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ppIsInValid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvNotPickable = new System.Windows.Forms.DataGridView();
             this.NotPickable = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnGetData = new System.Windows.Forms.Button();
@@ -52,6 +46,13 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.label2 = new System.Windows.Forms.Label();
             this.cbSite = new System.Windows.Forms.ComboBox();
+            this.cbProxy = new System.Windows.Forms.CheckBox();
+            this.TotalCost = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.costTarget = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.costIsInvalid = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.PercPicked = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ppTarget = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ppIsInValid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTeams)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCost)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPercPicked)).BeginInit();
@@ -76,11 +77,14 @@
             // Team
             // 
             this.Team.HeaderText = "Team";
+            this.Team.MinimumWidth = 6;
             this.Team.Name = "Team";
+            this.Team.Width = 125;
             // 
             // TmCurrent
             // 
             this.TmCurrent.HeaderText = "Current";
+            this.TmCurrent.MinimumWidth = 6;
             this.TmCurrent.Name = "TmCurrent";
             this.TmCurrent.ReadOnly = true;
             this.TmCurrent.Width = 80;
@@ -88,12 +92,14 @@
             // TmTarget
             // 
             this.TmTarget.HeaderText = "Target";
+            this.TmTarget.MinimumWidth = 6;
             this.TmTarget.Name = "TmTarget";
             this.TmTarget.Width = 80;
             // 
             // TmIsInValid
             // 
             this.TmIsInValid.HeaderText = "IsInValid";
+            this.TmIsInValid.MinimumWidth = 6;
             this.TmIsInValid.Name = "TmIsInValid";
             this.TmIsInValid.ReadOnly = true;
             this.TmIsInValid.Width = 80;
@@ -110,24 +116,9 @@
             this.dgvCost.Location = new System.Drawing.Point(424, 12);
             this.dgvCost.Name = "dgvCost";
             this.dgvCost.RowHeadersVisible = false;
+            this.dgvCost.RowHeadersWidth = 51;
             this.dgvCost.Size = new System.Drawing.Size(306, 48);
             this.dgvCost.TabIndex = 1;
-            // 
-            // TotalCost
-            // 
-            this.TotalCost.HeaderText = "Total Cost";
-            this.TotalCost.Name = "TotalCost";
-            this.TotalCost.ReadOnly = true;
-            // 
-            // costTarget
-            // 
-            this.costTarget.HeaderText = "Target";
-            this.costTarget.Name = "costTarget";
-            // 
-            // costIsInvalid
-            // 
-            this.costIsInvalid.HeaderText = "IsInvalid";
-            this.costIsInvalid.Name = "costIsInvalid";
             // 
             // dgvPercPicked
             // 
@@ -141,24 +132,9 @@
             this.dgvPercPicked.Location = new System.Drawing.Point(424, 66);
             this.dgvPercPicked.Name = "dgvPercPicked";
             this.dgvPercPicked.RowHeadersVisible = false;
+            this.dgvPercPicked.RowHeadersWidth = 51;
             this.dgvPercPicked.Size = new System.Drawing.Size(306, 48);
             this.dgvPercPicked.TabIndex = 1;
-            // 
-            // PercPicked
-            // 
-            this.PercPicked.HeaderText = "% Picked";
-            this.PercPicked.Name = "PercPicked";
-            this.PercPicked.ReadOnly = true;
-            // 
-            // ppTarget
-            // 
-            this.ppTarget.HeaderText = "Target";
-            this.ppTarget.Name = "ppTarget";
-            // 
-            // ppIsInValid
-            // 
-            this.ppIsInValid.HeaderText = "IsInvalid";
-            this.ppIsInValid.Name = "ppIsInValid";
             // 
             // dgvNotPickable
             // 
@@ -174,6 +150,7 @@
             // NotPickable
             // 
             this.NotPickable.HeaderText = "Players Not Pickable";
+            this.NotPickable.MinimumWidth = 6;
             this.NotPickable.Name = "NotPickable";
             this.NotPickable.Width = 200;
             // 
@@ -225,6 +202,7 @@
             // 
             // statusStrip1
             // 
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
             this.statusStrip1.Location = new System.Drawing.Point(0, 384);
@@ -256,11 +234,63 @@
             this.cbSite.TabIndex = 8;
             this.cbSite.SelectedIndexChanged += new System.EventHandler(this.cbSite_SelectedIndexChanged);
             // 
+            // cbProxy
+            // 
+            this.cbProxy.AutoSize = true;
+            this.cbProxy.Checked = true;
+            this.cbProxy.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbProxy.Location = new System.Drawing.Point(195, 15);
+            this.cbProxy.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cbProxy.Name = "cbProxy";
+            this.cbProxy.Size = new System.Drawing.Size(99, 17);
+            this.cbProxy.TabIndex = 9;
+            this.cbProxy.Text = "Use OUT proxy";
+            this.cbProxy.UseVisualStyleBackColor = true;
+            // 
+            // TotalCost
+            // 
+            this.TotalCost.HeaderText = "Total Cost";
+            this.TotalCost.MinimumWidth = 6;
+            this.TotalCost.Name = "TotalCost";
+            this.TotalCost.ReadOnly = true;
+            // 
+            // costTarget
+            // 
+            this.costTarget.HeaderText = "Target";
+            this.costTarget.MinimumWidth = 6;
+            this.costTarget.Name = "costTarget";
+            // 
+            // costIsInvalid
+            // 
+            this.costIsInvalid.HeaderText = "IsInvalid";
+            this.costIsInvalid.MinimumWidth = 6;
+            this.costIsInvalid.Name = "costIsInvalid";
+            // 
+            // PercPicked
+            // 
+            this.PercPicked.HeaderText = "% Picked";
+            this.PercPicked.MinimumWidth = 6;
+            this.PercPicked.Name = "PercPicked";
+            this.PercPicked.ReadOnly = true;
+            // 
+            // ppTarget
+            // 
+            this.ppTarget.HeaderText = "Target";
+            this.ppTarget.MinimumWidth = 6;
+            this.ppTarget.Name = "ppTarget";
+            // 
+            // ppIsInValid
+            // 
+            this.ppIsInValid.HeaderText = "IsInvalid";
+            this.ppIsInValid.MinimumWidth = 6;
+            this.ppIsInValid.Name = "ppIsInValid";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(740, 406);
+            this.Controls.Add(this.cbProxy);
             this.Controls.Add(this.cbSite);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.statusStrip1);
@@ -290,13 +320,7 @@
 
         private System.Windows.Forms.DataGridView dgvTeams;
         private System.Windows.Forms.DataGridView dgvCost;
-        private System.Windows.Forms.DataGridViewTextBoxColumn TotalCost;
-        private System.Windows.Forms.DataGridViewTextBoxColumn costTarget;
-        private System.Windows.Forms.DataGridViewTextBoxColumn costIsInvalid;
         private System.Windows.Forms.DataGridView dgvPercPicked;
-        private System.Windows.Forms.DataGridViewTextBoxColumn PercPicked;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ppTarget;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ppIsInValid;
         private System.Windows.Forms.DataGridView dgvNotPickable;
         private System.Windows.Forms.DataGridViewTextBoxColumn NotPickable;
         private System.Windows.Forms.Button btnGetData;
@@ -312,5 +336,12 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn TmTarget;
         private System.Windows.Forms.DataGridViewTextBoxColumn TmIsInValid;
         private System.Windows.Forms.ComboBox cbSite;
+        private System.Windows.Forms.CheckBox cbProxy;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TotalCost;
+        private System.Windows.Forms.DataGridViewTextBoxColumn costTarget;
+        private System.Windows.Forms.DataGridViewTextBoxColumn costIsInvalid;
+        private System.Windows.Forms.DataGridViewTextBoxColumn PercPicked;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ppTarget;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ppIsInValid;
     }
 }

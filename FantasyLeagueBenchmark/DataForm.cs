@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.IO.Compression;
+using System.Text;
 
 namespace FantasyLeagueBenchmark
 {
@@ -62,7 +63,7 @@ namespace FantasyLeagueBenchmark
             ProcessPlayerJson();
         }
 
-        public void GetPlayerJson(String url, MainForm mf)
+        public void GetPlayerJson(String url, MainForm mf, bool useProxy)
         {
             String responseFromServer = "";
             try
@@ -70,14 +71,14 @@ namespace FantasyLeagueBenchmark
                 ServicePointManager.Expect100Continue = true;
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-                WebRequest request = WebRequest.Create(url);
+                HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
 
                 WebProxy webProxy = new WebProxy("http://172.17.6.119:8080/", true)
                 {
                     UseDefaultCredentials = true
                 };
 
-                request.Proxy = webProxy;
+                if (useProxy) request.Proxy = webProxy;
 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 Stream dataStream = response.GetResponseStream();
@@ -87,14 +88,56 @@ namespace FantasyLeagueBenchmark
                 {
                     using (GZipStream gzipstream = new GZipStream(dataStream, CompressionMode.Decompress))
                     {
-                        reader = new StreamReader(gzipstream);
-                        responseFromServer = reader.ReadToEnd();
+                        using (reader = new StreamReader(gzipstream))
+                            responseFromServer = reader.ReadToEnd();
                     }
                 }
                 else
                 {
-                    reader = new StreamReader(dataStream);
-                    responseFromServer = reader.ReadToEnd();
+                    using (reader = new StreamReader(dataStream))
+                        responseFromServer = reader.ReadToEnd();
+                }
+
+                File.WriteAllText("players_" + site.ToString() + ".json", responseFromServer);
+
+                //Use selling price instead of buying price for owned players
+                if (site == SupportedSite.PremierLeague)
+                {
+                    request = (HttpWebRequest)HttpWebRequest.Create("https://users.premierleague.com/accounts/login/");
+
+                    String postData = "csrfmiddlewaretoken=Tli3z0rN1rDwzxJ8JKFCBHuieOqgHms1jyrGHyVnAkWZPoi6rsYRHGjvxqBS8Yhx&login=qtotto%40hotmail.com&password=Qt870802&app=plusers&redirect_uri=https%3A%2F%2Fusers.premierleague.com%2F";
+                    ASCIIEncoding ascii = new ASCIIEncoding();
+                    byte[] postBytes = ascii.GetBytes(postData);
+
+                    var cookies = new CookieContainer();
+
+                    request.Method = "POST";
+                    request.ContentType = "application/x-www-form-urlencoded";
+                    request.ContentLength = postBytes.Length;
+                    if (useProxy) request.Proxy = webProxy;
+                    request.CookieContainer = cookies;
+
+                    Stream postStream = request.GetRequestStream();
+                    postStream.Write(postBytes, 0, postBytes.Length);
+                    postStream.Flush();
+                    postStream.Close();
+
+                    response = (HttpWebResponse)request.GetResponse();
+                    dataStream = response.GetResponseStream();
+
+                    request = (HttpWebRequest)HttpWebRequest.Create("https://fantasy.premierleague.com/api/my-team/5113787/");
+
+                    request.Method = "GET";
+                    if (useProxy) request.Proxy = webProxy;
+                    request.CookieContainer = cookies;
+
+                    response = (HttpWebResponse)request.GetResponse();
+                    dataStream = response.GetResponseStream();
+
+                    using (reader = new StreamReader(dataStream))
+                        responseFromServer = reader.ReadToEnd();
+
+                    File.WriteAllText("team_" + site.ToString() + ".json", responseFromServer);
                 }
             }
             catch (UriFormatException)
@@ -103,7 +146,9 @@ namespace FantasyLeagueBenchmark
                 return;
             }
 
-            File.WriteAllText("players_" + site.ToString() + ".json", responseFromServer);
+            
+
+            
 
             ProcessPlayerJson();
         }
@@ -373,7 +418,10 @@ namespace FantasyLeagueBenchmark
                     break;
 
                 case SupportedSite.PremierLeague:
+
                     PremierLeagueJSON premierleaguedata = JsonConvert.DeserializeObject<PremierLeagueJSON>(responseFromServer);
+                    responseFromServer = File.ReadAllText("team_" + site.ToString() + ".json");
+                    PremierLeagueTeamJSON premierleagueteamdata = JsonConvert.DeserializeObject<PremierLeagueTeamJSON>(responseFromServer);
 
                     foreach (var entry in premierleaguedata.elements)
                     {
@@ -462,7 +510,11 @@ namespace FantasyLeagueBenchmark
                                 throw new KeyNotFoundException("Team not found");
 
                         }
-                        p.Price = entry.now_cost / 10;
+
+                        PremierLeagueTeamPlayer[] arr = premierleagueteamdata.picks.Where(x => x.element == entry.id).ToArray();
+
+                        p.Price = arr.Length == 1 ? arr[0].selling_price / 10 : entry.now_cost / 10;
+
                         p.Points = entry.total_points;
                         p.PercPicked = entry.selected_by_percent;
                         p.Pickable = 1;

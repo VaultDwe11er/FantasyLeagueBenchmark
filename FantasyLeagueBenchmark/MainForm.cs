@@ -34,7 +34,7 @@ namespace FantasyLeagueBenchmark
             SaveData();
 
             string url = xdoc.XPathSelectElement("Data/Url").Value;
-            df.GetPlayerJson(url, this);
+            df.GetPlayerJson(url, this, cbProxy.Checked);
         }
 
         private void btnRunModel_Click(object sender, EventArgs e)
