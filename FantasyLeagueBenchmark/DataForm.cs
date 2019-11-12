@@ -172,7 +172,7 @@ namespace FantasyLeagueBenchmark
                         p.Name = entry[13];
                         p.Position = entry[6];
                         p.Team = entry[7];
-                        p.Price = double.Parse(entry[3]);
+                        p.Price = decimal.Parse(entry[3]);
                         p.Points = int.Parse(entry[18]);
                         p.PercPicked = int.Parse(entry[16]);
                         p.Pickable = 1;
@@ -1222,8 +1222,8 @@ namespace FantasyLeagueBenchmark
 
         void CheckFound()
         {
-            double tgtPercPicked = parent.TargetPercPicked;
-            double tgtCost = parent.TargetCost;
+            decimal tgtPercPicked = parent.TargetPercPicked;
+            decimal tgtCost = parent.TargetCost;
 
             players.ForEach(x => x.IsPicked = 0);
 

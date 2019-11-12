@@ -8,9 +8,9 @@ namespace FantasyLeagueBenchmark
         public String Name { get; set; }
         public String Position { get; set; }
         public String Team { get; set; }
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         public int Points { get; set; }
-        public double PercPicked { get; set; }
+        public decimal PercPicked { get; set; }
         public int Seq { get; set; }
         public int IsPicked { get; set; }
         public int Pickable { get; set; }
@@ -64,7 +64,7 @@ namespace FantasyLeagueBenchmark
         public int nextFixtureId { get; set; }
         public int sideId { get; set; }
         public int teams_selected { get; set; }
-        public float value { get; set; }
+        public decimal value { get; set; }
         public int totalPoints { get; set; }
     }
 
@@ -90,12 +90,12 @@ namespace FantasyLeagueBenchmark
         public int season_rank { get; set; }
         public int games_played { get; set; }
         public int total_points { get; set; }
-        public double avg_points { get; set; }
+        public decimal avg_points { get; set; }
         public int high_score { get; set; }
-        public double last_3_avg { get; set; }
-        public double last_5_avg { get; set; }
+        public decimal last_3_avg { get; set; }
+        public decimal last_5_avg { get; set; }
         public int selections { get; set; }
-        public double owned_by { get; set; }
+        public decimal owned_by { get; set; }
     }
 
     public class SportsDeckJson
@@ -123,7 +123,7 @@ namespace FantasyLeagueBenchmark
     {
         public int price { get; set; }
         public int total_points { get; set; }
-        public double owned { get; set; }
+        public decimal owned { get; set; }
     }
 
     public class PremierLeagueJSON
@@ -142,15 +142,15 @@ namespace FantasyLeagueBenchmark
         public String second_name;
         public int element_type;
         public int team_code;
-        public double now_cost;
+        public decimal now_cost;
         public int total_points;
-        public double selected_by_percent;
+        public decimal selected_by_percent;
         public int id;
     }
 
     public class PremierLeagueTeamPlayer
     {
         public int element;
-        public double selling_price;
+        public decimal selling_price;
     }
 }

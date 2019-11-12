@@ -69,14 +69,14 @@ namespace FantasyLeagueBenchmark
             df.Show();
         }
 
-        public double TargetPercPicked
+        public decimal TargetPercPicked
         {
-            get { return double.Parse(dgvPercPicked.Rows[0].Cells[1].Value.ToString()); }
+            get { return decimal.Parse(dgvPercPicked.Rows[0].Cells[1].Value.ToString()); }
         }
 
-        public double TargetCost
+        public decimal TargetCost
         {
-            get { return double.Parse(dgvCost.Rows[0].Cells[1].Value.ToString()); }
+            get { return decimal.Parse(dgvCost.Rows[0].Cells[1].Value.ToString()); }
         }
 
         public DataGridView DgvTeams
@@ -111,15 +111,15 @@ namespace FantasyLeagueBenchmark
                 dgvNotPickable.Rows.Add(node.Attribute("Name").Value);
             }
 
-            double targetCost = double.Parse(xdoc.XPathSelectElement("Data/Cost").Attribute("Target").Value);
-            double actualCost = double.Parse(xdoc.XPathSelectElement("Data/Cost").Attribute("Actual").Value);
-            double costInvalid = actualCost <= targetCost ? 0 : 1;
+            decimal targetCost = decimal.Parse(xdoc.XPathSelectElement("Data/Cost").Attribute("Target").Value);
+            decimal actualCost = decimal.Parse(xdoc.XPathSelectElement("Data/Cost").Attribute("Actual").Value);
+            decimal costInvalid = actualCost <= targetCost ? 0 : 1;
 
             if (dgvCost.Rows.Count == 1) dgvCost.Rows.RemoveAt(0);
             dgvCost.Rows.Add(actualCost, targetCost, costInvalid);
 
-            double targetPercPicked = double.Parse(xdoc.XPathSelectElement("Data/PercPicked").Attribute("Target").Value);
-            double actualPercPicked = double.Parse(xdoc.XPathSelectElement("Data/PercPicked").Attribute("Actual").Value);
+            decimal targetPercPicked = decimal.Parse(xdoc.XPathSelectElement("Data/PercPicked").Attribute("Target").Value);
+            decimal actualPercPicked = decimal.Parse(xdoc.XPathSelectElement("Data/PercPicked").Attribute("Actual").Value);
             int percPickedInvalid = actualPercPicked >= targetPercPicked ? 0 : 1;
 
             if (dgvPercPicked.Rows.Count == 1) dgvPercPicked.Rows.RemoveAt(0);
